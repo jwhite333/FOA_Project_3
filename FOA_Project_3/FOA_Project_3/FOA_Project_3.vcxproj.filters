@@ -14,4 +14,46 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="heapV.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="d_except.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="word_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="input15.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="input30.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="input50.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="input250.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="puzzle10.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="puzzle10-words.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="wordlist.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="wordlist2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="word_search.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>

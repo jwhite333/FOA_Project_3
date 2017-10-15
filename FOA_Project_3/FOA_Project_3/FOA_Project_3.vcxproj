@@ -18,6 +18,24 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="d_except.h" />
+    <ClInclude Include="word_list.h" />
+    <ClInclude Include="heapV.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="input15.txt" />
+    <Text Include="input250.txt" />
+    <Text Include="input30.txt" />
+    <Text Include="input50.txt" />
+    <Text Include="puzzle10-words.txt" />
+    <Text Include="puzzle10.txt" />
+    <Text Include="wordlist.txt" />
+    <Text Include="wordlist2.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="word_search.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{E483D892-84B0-47E2-8B38-8853AFA31C6F}</ProjectGuid>
@@ -138,8 +156,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
