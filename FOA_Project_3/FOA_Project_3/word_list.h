@@ -7,6 +7,29 @@
 
 using namespace std;
 
+enum FIND_QUALIFIER
+{
+	FOUND = 0,
+	SUBSTRING,
+	NOT_FOUND
+
+};
+
+struct findResult
+{
+	int index;
+	FIND_QUALIFIER qualifier;
+
+	findResult(int index, FIND_QUALIFIER qualifier) : index(index), qualifier (qualifier) {};
+};
+
+enum SORTING_ALGORITHM
+{
+	INSERTION_SORT = 0,
+	QUICK_SORT,
+	MERGE_SORT
+};
+
 class wordList
 {
 private:
@@ -120,5 +143,107 @@ public:
 		{
 			cout << list[i] << endl;
 		}
+	}
+
+	/*
+	 * print
+	 *
+	 * Prints the specified word to stdout
+	 */
+	void print(int index)
+	{
+		if (index >= 0 && index < (int) list.size())
+			cout << list[index] << endl;
+	}
+
+	/*
+	 * find
+	 *
+	 * Returns the index of the word if it resides in the word list (binary search)
+	 * Returns -1 on failure
+	 */
+	findResult find(string word)
+	{
+		int sublistBegin = 0;
+		int subListEnd = list.size() - 1;
+
+		// Look for the word using a binary search
+		int guess = (sublistBegin + subListEnd) / 2;
+		while (guess != sublistBegin && guess != subListEnd)
+		{
+			// Word was found
+			if (list[guess] == word)
+				return findResult(guess, FOUND);
+
+			// Change the size of the sublist based on where the guess was in relation to the word
+			if (list[guess].compare(word) < 0)
+				sublistBegin = guess;
+			else
+				subListEnd = guess;
+		}
+
+		// Word was not found, check if it is a substring
+		for (int i = 0; i < (int) word.length(); i++)
+		{
+			if (word[i] != list[guess][i])
+				return findResult(guess, NOT_FOUND);
+		}
+
+		// Result is a sibstring of at least one word in the list
+		return findResult(guess, SUBSTRING);
+
+	}
+
+	/*
+	 * sort
+	 *
+	 * Sorts the words using one of the 3 sorting algorithms
+	 */
+	void sort(SORTING_ALGORITHM algorithm)
+	{
+		switch (algorithm)
+		{
+		case INSERTION_SORT:
+			insertionSort();
+			break;
+
+		case QUICK_SORT:
+			quickSort();
+			break;
+
+		case MERGE_SORT:
+			mergeSort();
+			break;
+		}
+	}
+
+	/*
+	 * insertionSort
+	 *
+	 * Sorts word list using insertion sort
+	 */
+	void insertionSort()
+	{
+		return;
+	}
+
+	/*
+	 * quickSort
+	 *
+	 * Sorts word list using quick sort
+	 */
+	void quickSort()
+	{
+		return;
+	}
+
+	/*
+	 * mergeSort
+	 *
+	 * Sorts word list using merge sort
+	 */
+	void mergeSort()
+	{
+		return;
 	}
 };

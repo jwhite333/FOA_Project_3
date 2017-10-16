@@ -1,15 +1,34 @@
 #pragma once
 #include <vector>
 #include <fstream>
-#include <functional>
+#include <thread>
+#include "word_list.h"
 
+// Input parameters
 #define ASCII_A 65
 #define ASCII_Z 90
 #define ASCII_a 97
 #define ASCII_z 122
 #define ASCII_NEW_LINE 10
 
+// Matrix parameters
+#define MATRIX_DIRECTIONS 8
+#define MIN_WORD_LENGTH 5
+
 using namespace std;
+
+enum SEARCH_DIRECTION
+{
+	NORTH = 0,
+	NORTH_EAST,
+	EAST,
+	SOUTH_EAST,
+	SOUTH,
+	SOUTH_WEST,
+	WEST,
+	NORTH_WEST,
+	DIRECTION_NUM
+};
 
 class grid
 {
@@ -126,6 +145,11 @@ public:
 		}
 	}
 
+	/*
+	 * print
+	 *
+	 * Prints the char matrix to sdout
+	 */
 	void print()
 	{
 		cout << "Grid contains:" << endl << endl;
@@ -138,5 +162,149 @@ public:
 			cout << endl;
 		}
 	}
+
+	/*
+	 * getWord
+	 *
+	 * Gets word from specified direction from matrix
+	 */
+	string getWord(int row, int column, int direction, int wordSize)
+	{
+		// Create a word of designated size
+		string word = "";
+
+		// Get matrix dimentions
+		int length = letterMatrix[0].size();
+		int height = letterMatrix.size();
+		
+		switch (direction)
+		{
+		case NORTH:
+			for (int i = 0; i < wordSize; i++)
+			{
+				int rowIndex = (row - i) % height;
+				word += letterMatrix[rowIndex][column];
+			}
+			break;
+		case NORTH_EAST:
+			for (int i = 0; i < wordSize; i++)
+			{
+				int rowIndex = (row - i) % height;
+				int columnIndex = (column + i) % length;
+				word += letterMatrix[rowIndex][columnIndex];
+			}
+			break;
+		case EAST:
+			for (int i = 0; i < wordSize; i++)
+			{
+				int columnIndex = (column + i) % length;
+				word += letterMatrix[row][columnIndex];
+			}
+			break;
+		case SOUTH_EAST:
+			for (int i = 0; i < wordSize; i++)
+			{
+				int rowIndex = (row + i) % height;
+				int columnIndex = (column + i) % length;
+				word += letterMatrix[rowIndex][columnIndex];
+			}
+			break;
+		case SOUTH:
+			for (int i = 0; i < wordSize; i++)
+			{
+				int rowIndex = (row + i) % height;
+				word += letterMatrix[rowIndex][column];
+			}
+			break;
+		case SOUTH_WEST:
+			for (int i = 0; i < wordSize; i++)
+			{
+				int rowIndex = (row + i) % height;
+				int columnIndex = (column - i) % length;
+				word += letterMatrix[rowIndex][columnIndex];
+			}
+			break;
+		case WEST:
+			for (int i = 0; i < wordSize; i++)
+			{
+				int columnIndex = (column - i) % length;
+				word += letterMatrix[row][columnIndex];
+			}
+			break;
+		case NORTH_WEST:
+			for (int i = 0; i < wordSize; i++)
+			{
+				int rowIndex = (row + i) % height;
+				int columnIndex = (column - i) % length;
+				word += letterMatrix[rowIndex][columnIndex];
+			}
+			break;
+		}
+
+		// Return new word
+		return word;
+	}
+
+	/*
+	 * findWords
+	 *
+	 * Finds words contained in the matrix using the specified wordlist
+	 */
+	void findWords(wordList * wordList)
+	{
+		// Kick off threads to each seach the matrix for a specific direction
+		thread threads[(int)DIRECTION_NUM];
+		for (int direction = 0; direction < (int)DIRECTION_NUM; direction++)
+		{
+			threads[direction] = thread (&grid::directionalWordFind, this, wordList, direction);
+		}
+
+		// CLose out all threads when they are done
+		for (int direction = 0; direction < (int)DIRECTION_NUM; direction++)
+		{
+			threads[direction].join();
+		}
+	}
+
+	/*
+	 * directionalWordFind
+	 *
+	 * Looks through the matrix and checks one specific direction of words each time it moves to a new letter
+	 */
+	void directionalWordFind(wordList * wordList, int direction)
+	{
+		// Traverse the matrix
+		for (int row = 0; row < (int)letterMatrix.size(); row++)
+		{
+			for (int column = 0; column < (int)letterMatrix[row].size(); column++)
+			{
+				for (int wordSize = MIN_WORD_LENGTH; wordSize < (int) letterMatrix[row].size(); wordSize++)
+				{
+					// Get word from matrix
+					string word = getWord(row, column, direction, wordSize);
+
+					// Look for word in the list
+					findResult result = wordList->find(word);
+
+					// If word is found, print it
+					if (result.qualifier == FOUND)
+						wordList->print(result.index);
+
+					// If word fragment is potentially part of a larger word, keep incrimenting the size
+					else if (result.qualifier == SUBSTRING)
+						continue;
+
+					// If the word was not found at all, this direction will not yeild any more words
+					else
+						break;
+				}
+			}
+		}
+	}
+
+	 void test(int number)
+	 {
+		 cout << "Hello from number: " << number << endl;
+	 }
 
 };
