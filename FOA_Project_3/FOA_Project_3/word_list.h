@@ -11,7 +11,7 @@ class wordList
 {
 private:
 	// Member variables
-	vector<string> * list;
+	vector<string> list;
 	vector<string> availableListFiles = { "wordlist.txt", "wordlist2.txt" };
 
 	/*
@@ -73,37 +73,15 @@ private:
 		} while (error != inputError::NONE);
 
 		// Choose list file
-		return availableListFiles[input];
+		return availableListFiles[input - 1];
 	}
 
 public:
-	/*
-	* constructor
-	*
-	* Initializes word list to be NULL
-	*/
-	wordList()
-	{
-		list = NULL;
-	}
-
-	/*
-	 * destructor
-	 *
-	 * Cleans up the word list if it exists
-	 */
-	~wordList()
-	{
-		if (list)
-			delete list;
-	}
 
 	/*
 	 * readlist
 	 *
 	 * Reads words from the specified text file and returns them in a vector of strings
-	 *
-	 * @param file
 	 */
 	void readlist()
 	{
@@ -115,9 +93,8 @@ public:
 			throw fileOpenError(file);
 
 		// Initialize vector, overwriting old vector if necessary
-		if (list)
-			delete list;
-		list = new vector<string>;
+		if ((int)list.size() > 0)
+			list.resize(0);
 
 		// Read file
 		string word;
@@ -126,7 +103,7 @@ public:
 			if (inFile.bad())
 				throw fileError("std::getline failed");
 
-			list->push_back(word);
+			list.push_back(word);
 		}
 	}
 
@@ -139,18 +116,9 @@ public:
 	{
 		// Print
 		cout << "Word list contains:" << endl;
-
-		// Check if word list exists yet
-		if (!list)
+		for (int i = 0; i < (int)list.size(); i++)
 		{
-			cout << "Nothing" << endl;
-			return;
-		}
-
-		// Otherwise print words
-		for (int i = 0; i < (int)list->size(); i++)
-		{
-			cout << (*list)[i] << endl;
+			cout << list[i] << endl;
 		}
 	}
 };

@@ -1,19 +1,29 @@
 #include "word_list.h"
+#include "grid.h"
 
 int main()
 {
 	wordList wordList;
+	grid grid;
 
-	try
+	/*try
 	{
 		wordList.readlist();
 	}
 	catch (baseException e)
 	{
 		cout << e.what();
+	}*/
+
+	try
+	{
+		grid.readCharMatrix();
 	}
-	
-	wordList.print();
+	catch (baseException e)
+	{
+		cout << e.what();
+	}
+	grid.print();
 
 	system("pause");
 	return 0;

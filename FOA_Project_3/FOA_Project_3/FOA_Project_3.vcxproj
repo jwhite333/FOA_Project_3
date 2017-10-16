@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="d_except.h" />
+    <ClInclude Include="grid.h" />
     <ClInclude Include="word_list.h" />
     <ClInclude Include="heapV.h" />
   </ItemGroup>

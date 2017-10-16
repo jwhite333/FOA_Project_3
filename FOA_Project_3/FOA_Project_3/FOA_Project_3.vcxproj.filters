@@ -24,6 +24,9 @@
     <ClInclude Include="word_list.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="grid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="input15.txt">
