@@ -224,7 +224,19 @@ public:
 	 */
 	void insertionSort()
 	{
-		return;
+		std::string word;
+		int i;
+		for (int j = 1; j < list.size(); j++)
+		{
+			word = list[j];
+			i = j - 1;
+			while (i >= 0 && list[i] > word)
+			{
+				list[i + 1] = list[i];
+				i = i - 1;
+			}
+			list[i + 1] = word;
+		}
 	}
 
 	/*
@@ -234,7 +246,36 @@ public:
 	 */
 	void quickSort()
 	{
-		return;
+		quickSortIteration(0, list.size() - 1);
+	}
+	void quickSortIteration(int left, int right)
+	{
+		std::string pivot = list[right];
+		std::string temp;
+		int i = left - 1;
+		int j = left;
+		for (j; j < right; j++)
+		{
+			if (list[j] <= pivot)
+			{
+				i++;
+				temp = list[i];
+				list[i] = list[j];
+				list[j] = temp;
+			}
+		}
+
+		list[right] = list[i + 1];
+		list[i + 1] = pivot;
+		if (left < i)
+		{
+			quickSortIteration(left, i);
+		}
+		if (i + 2<right && i != -1)
+		{
+			quickSortIteration(i + 2, right);
+		}
+
 	}
 
 	/*
@@ -244,6 +285,56 @@ public:
 	 */
 	void mergeSort()
 	{
-		return;
+		mergeSortIteration(0, list.size() - 1);
+	}
+
+	void mergeSortIteration(int low, int high)
+	{
+		int mid;
+		if (low < high)
+		{
+			mid = (low + high) / 2;
+			mergeSortIteration(low, mid);
+			mergeSortIteration(mid + 1, high);
+			merge(low, mid, high);
+		}
+	}
+	void merge(int low, int mid, int high)
+	{
+		std::string tempword;
+		vector<string> tempList;
+		int l = low, m = mid + 1, h = high;
+
+		while (l <= mid && m <= high)
+		{
+			if (list[l] < list[m])
+			{
+				tempList.push_back(list[l]);
+				l++;
+			}
+			else
+			{
+				tempList.push_back(list[m]);
+				m++;
+			}
+		}
+
+		while (l <= mid)
+		{
+			tempList.push_back(list[l]);
+			l++;
+		}
+		while (m <= high)
+		{
+			tempList.push_back(list[m]);
+			m++;
+		}
+		tempList;
+
+		for (int index = low; index <= high; index++)
+		{
+			list[index] = tempList[index - low];
+		}
+		list;
 	}
 };
