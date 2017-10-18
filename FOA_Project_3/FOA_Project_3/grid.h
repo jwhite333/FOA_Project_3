@@ -2,7 +2,11 @@
 #include <vector>
 #include <fstream>
 #include <thread>
+#include <mutex>
 #include "word_list.h"
+
+// Threadsafe printing
+mutex printLock;
 
 // Input parameters
 #define ASCII_A 65
@@ -14,6 +18,23 @@
 // Matrix parameters
 #define MATRIX_DIRECTIONS 8
 #define MIN_WORD_LENGTH 5
+
+/*
+ * MOD
+ *
+ * Redefines the % operation to return only positive values
+ *
+ * @param parameter
+ * @param base
+ */
+inline int MOD(int parameter, int base)
+{
+	int result = parameter % base;
+	if (result < 0)
+		return result + base;
+	else
+		return result;
+}
 
 using namespace std;
 
@@ -35,7 +56,7 @@ class grid
 private:
 	// Member variables
 	vector<vector<char>> letterMatrix;
-	vector<string> availableMatrixFiles = { "input15.txt", "input30.txt", "input50.txt", "input250.txt" };
+	vector<string> availableMatrixFiles = { "puzzle10.txt", "input15.txt", "input30.txt", "input50.txt", "input250.txt" };
 
 	/*
 	 * pickMatrixFile
@@ -182,60 +203,60 @@ public:
 		case NORTH:
 			for (int i = 0; i < wordSize; i++)
 			{
-				int rowIndex = (row - i) % height;
+				int rowIndex = MOD((row - i), height);
 				word += letterMatrix[rowIndex][column];
 			}
 			break;
 		case NORTH_EAST:
 			for (int i = 0; i < wordSize; i++)
 			{
-				int rowIndex = (row - i) % height;
-				int columnIndex = (column + i) % length;
+				int rowIndex = MOD((row - i), height);
+				int columnIndex = MOD((column + i), length);
 				word += letterMatrix[rowIndex][columnIndex];
 			}
 			break;
 		case EAST:
 			for (int i = 0; i < wordSize; i++)
 			{
-				int columnIndex = (column + i) % length;
+				int columnIndex = MOD((column + i), length);
 				word += letterMatrix[row][columnIndex];
 			}
 			break;
 		case SOUTH_EAST:
 			for (int i = 0; i < wordSize; i++)
 			{
-				int rowIndex = (row + i) % height;
-				int columnIndex = (column + i) % length;
+				int rowIndex = MOD((row + i), height);
+				int columnIndex = MOD((column + i), length);
 				word += letterMatrix[rowIndex][columnIndex];
 			}
 			break;
 		case SOUTH:
 			for (int i = 0; i < wordSize; i++)
 			{
-				int rowIndex = (row + i) % height;
+				int rowIndex = MOD((row + i), height);
 				word += letterMatrix[rowIndex][column];
 			}
 			break;
 		case SOUTH_WEST:
 			for (int i = 0; i < wordSize; i++)
 			{
-				int rowIndex = (row + i) % height;
-				int columnIndex = (column - i) % length;
+				int rowIndex = MOD((row + i), height);
+				int columnIndex = MOD((column - i), length);
 				word += letterMatrix[rowIndex][columnIndex];
 			}
 			break;
 		case WEST:
 			for (int i = 0; i < wordSize; i++)
 			{
-				int columnIndex = (column - i) % length;
+				int columnIndex = MOD((column - i), length);
 				word += letterMatrix[row][columnIndex];
 			}
 			break;
 		case NORTH_WEST:
 			for (int i = 0; i < wordSize; i++)
 			{
-				int rowIndex = (row + i) % height;
-				int columnIndex = (column - i) % length;
+				int rowIndex = MOD((row + i), height);
+				int columnIndex = MOD((column - i), length);
 				word += letterMatrix[rowIndex][columnIndex];
 			}
 			break;
@@ -254,6 +275,7 @@ public:
 	{
 		// Kick off threads to each seach the matrix for a specific direction
 		thread threads[(int)DIRECTION_NUM];
+
 		for (int direction = 0; direction < (int)DIRECTION_NUM; direction++)
 		{
 			threads[direction] = thread (&grid::directionalWordFind, this, wordList, direction);
@@ -288,7 +310,11 @@ public:
 
 					// If word is found, print it
 					if (result.qualifier == FOUND)
+					{
+						printLock.lock();
 						wordList->print(result.index);
+						printLock.unlock();
+					}
 
 					// If word fragment is potentially part of a larger word, keep incrimenting the size
 					else if (result.qualifier == SUBSTRING)
@@ -301,10 +327,4 @@ public:
 			}
 		}
 	}
-
-	 void test(int number)
-	 {
-		 cout << "Hello from number: " << number << endl;
-	 }
-
 };

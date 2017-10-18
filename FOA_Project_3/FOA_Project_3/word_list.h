@@ -180,18 +180,38 @@ public:
 				sublistBegin = guess;
 			else
 				subListEnd = guess;
+			
+			// Guess again
+			guess = (sublistBegin + subListEnd) / 2;
 		}
 
-		// Word was not found, check if it is a substring
-		for (int i = 0; i < (int) word.length(); i++)
+		// Word was not found, check if it is a substring. Might be off by +/- 1 though so check all 3 cases
+		for (int offset = -1; offset < 2; offset++)
 		{
-			if (word[i] != list[guess][i])
-				return findResult(guess, NOT_FOUND);
+			// Check if offsets are in the list
+			if (guess + offset >= 0 && guess + offset < (int)list.size())
+			{
+				// Check if the offset word is long enough to need to compare
+				if ((int)list[guess + offset].length() >= (int)word.length())
+				{
+					// Check for a match with the first word.length() characters in the word
+					bool match = true;
+					for (int index = 0; index < (int)word.length(); index++)
+					{
+						if (word[index] != list[guess + offset][index])
+							match = false;
+					}
+					if (match)
+					{
+						// Result is a substring of at least one word in the list
+						return findResult(guess, SUBSTRING);
+					}
+				}
+			}
 		}
 
-		// Result is a sibstring of at least one word in the list
-		return findResult(guess, SUBSTRING);
-
+		// Result is not a substring of anything in the list
+		return findResult(guess, NOT_FOUND);
 	}
 
 	/*
@@ -226,7 +246,7 @@ public:
 	{
 		std::string word;
 		int i;
-		for (int j = 1; j < list.size(); j++)
+		for (int j = 1; j < (int) list.size(); j++)
 		{
 			word = list[j];
 			i = j - 1;

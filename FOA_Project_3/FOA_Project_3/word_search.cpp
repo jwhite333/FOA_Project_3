@@ -57,7 +57,7 @@ void search(SORTING_ALGORITHM algorithm, wordList * wordList, grid * letterMatri
 	std::clock_t start2 = std::clock();
 	// Find matches
 	
-	//findMatches(wordList, letterMatrix);					//Commented out so it doesn't attempt to search in an unsorted list
+	findMatches(wordList, letterMatrix);					// Commented out so it doesn't attempt to search in an unsorted list
 	
 	//Print out run time
 	double duration2 = (std::clock() - start2) / (double)CLOCKS_PER_SEC;
