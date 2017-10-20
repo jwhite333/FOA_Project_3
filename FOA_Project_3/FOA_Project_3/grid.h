@@ -3,6 +3,7 @@
 #include <fstream>
 #include <thread>
 #include <mutex>
+#include "helpers.h"
 #include "word_list.h"
 
 // Threadsafe printing
@@ -19,37 +20,7 @@ mutex printLock;
 #define MATRIX_DIRECTIONS 8
 #define MIN_WORD_LENGTH 5
 
-/*
- * MOD
- *
- * Redefines the % operation to return only positive values
- *
- * @param parameter
- * @param base
- */
-inline int MOD(int parameter, int base)
-{
-	int result = parameter % base;
-	if (result < 0)
-		return result + base;
-	else
-		return result;
-}
-
 using namespace std;
-
-enum SEARCH_DIRECTION
-{
-	NORTH = 0,
-	NORTH_EAST,
-	EAST,
-	SOUTH_EAST,
-	SOUTH,
-	SOUTH_WEST,
-	WEST,
-	NORTH_WEST,
-	DIRECTION_NUM
-};
 
 class grid
 {
@@ -140,14 +111,24 @@ public:
 		// Initialize vector, overwriting old vector if necessary
 		if ((int)letterMatrix.size() > 0)
 			letterMatrix.clear();
-		
+
 		// Read file
 		char letter;
-		int currentRow = -1; // A newline after the matrix size will incriment this to 0 when real values start
+		int currentRow = 0;
+		letterMatrix.resize(1);
+
+		// Read "header" without storing any data
 		while (inFile >> letter)
 		{
+			if ((int)letter >= ASCII_A && (int)letter <= ASCII_Z || (int)letter >= ASCII_a && (int)letter <= ASCII_z)
+				break;
+		}
+
+		// Start reading letters
+		do
+		{
 			if (inFile.bad())
-				throw fileError("std::getline failed");
+				throw fileError("reading character failed");
 
 			// Check for uppercase letters
 			if ((int) letter >= ASCII_A && (int) letter <= ASCII_Z)
@@ -163,7 +144,7 @@ public:
 				letterMatrix.resize(letterMatrix.size() + 1);
 				currentRow++;
 			}
-		}
+		} while (inFile >> letter);
 	}
 
 	/*
@@ -195,8 +176,8 @@ public:
 		string word = "";
 
 		// Get matrix dimentions
-		int length = letterMatrix[0].size();
 		int height = letterMatrix.size();
+		int length = letterMatrix[0].size();
 		
 		switch (direction)
 		{
@@ -271,14 +252,14 @@ public:
 	 *
 	 * Finds words contained in the matrix using the specified wordlist
 	 */
-	void findWords(wordList * wordList)
+	void findWords(wordList * wordList, SORTING_ALGORITHM algorithm)
 	{
 		// Kick off threads to each seach the matrix for a specific direction
 		thread threads[(int)DIRECTION_NUM];
 
 		for (int direction = 0; direction < (int)DIRECTION_NUM; direction++)
 		{
-			threads[direction] = thread (&grid::directionalWordFind, this, wordList, direction);
+			threads[direction] = thread (&grid::directionalWordFind, this, wordList, direction, algorithm);
 		}
 
 		// CLose out all threads when they are done
@@ -293,36 +274,66 @@ public:
 	 *
 	 * Looks through the matrix and checks one specific direction of words each time it moves to a new letter
 	 */
-	void directionalWordFind(wordList * wordList, int direction)
+	void directionalWordFind(wordList * wordList, int direction, SORTING_ALGORITHM algorithm)
 	{
-		// Traverse the matrix
-		for (int row = 0; row < (int)letterMatrix.size(); row++)
+		if (algorithm == HASH_TABLE)
 		{
-			for (int column = 0; column < (int)letterMatrix[row].size(); column++)
+			// Traverse the matrix using a hash table lookup to find elements
+			for (int row = 0; row < (int)letterMatrix.size(); row++)
 			{
-				for (int wordSize = MIN_WORD_LENGTH; wordSize < (int) letterMatrix[row].size(); wordSize++)
+				for (int column = 0; column < (int)letterMatrix[row].size(); column++)
 				{
-					// Get word from matrix
-					string word = getWord(row, column, direction, wordSize);
-
-					// Look for word in the list
-					findResult result = wordList->find(word);
-
-					// If word is found, print it
-					if (result.qualifier == FOUND)
+					for (int wordSize = MIN_WORD_LENGTH; wordSize < wordList->maxWordLength; wordSize++)
 					{
-						printLock.lock();
-						wordList->print(result.index);
-						printLock.unlock();
+						// Get word from matrix
+
+						string word = getWord(row, column, direction, wordSize);
+
+						// Look for word in the hash table
+						findResult result = wordList->table->inList(word);
+
+						// If word is found, print it
+						if (result.qualifier == FOUND)
+						{
+							printLock.lock();
+							wordList->table->print(result.index[0], result.index[1]);
+							printLock.unlock();
+						}
 					}
+				}
+			}
+		}
+		else
+		{
+			// Traverse the matrix using a binary search to find elements
+			for (int row = 0; row < (int)letterMatrix.size(); row++)
+			{
+				for (int column = 0; column < (int)letterMatrix[row].size(); column++)
+				{
+					for (int wordSize = MIN_WORD_LENGTH; wordSize < (int)letterMatrix[row].size(); wordSize++)
+					{
+						// Get word from matrix
+						string word = getWord(row, column, direction, wordSize);
 
-					// If word fragment is potentially part of a larger word, keep incrimenting the size
-					else if (result.qualifier == SUBSTRING)
-						continue;
+						// Look for word in the list
+						findResult result = wordList->find(word);
 
-					// If the word was not found at all, this direction will not yeild any more words
-					else
-						break;
+						// If word is found, print it
+						if (result.qualifier == FOUND)
+						{
+							printLock.lock();
+							wordList->print(result.index[0]);
+							printLock.unlock();
+						}
+
+						// If word fragment is potentially part of a larger word, keep incrimenting the size
+						else if (result.qualifier == SUBSTRING)
+							continue;
+
+						// If the word was not found at all, this direction will not yeild any more words
+						else
+							break;
+					}
 				}
 			}
 		}

@@ -3,37 +3,17 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include "d_except.h"
+#include "helpers.h"
+#include "hash.h"
 
 using namespace std;
-
-enum FIND_QUALIFIER
-{
-	FOUND = 0,
-	SUBSTRING,
-	NOT_FOUND
-
-};
-
-struct findResult
-{
-	int index;
-	FIND_QUALIFIER qualifier;
-
-	findResult(int index, FIND_QUALIFIER qualifier) : index(index), qualifier (qualifier) {};
-};
-
-enum SORTING_ALGORITHM
-{
-	INSERTION_SORT = 0,
-	QUICK_SORT,
-	MERGE_SORT
-};
 
 class wordList
 {
 private:
-	// Member variables
+	// Private member variables
 	vector<string> list;
 	vector<string> availableListFiles = { "wordlist.txt", "wordlist2.txt" };
 
@@ -100,6 +80,36 @@ private:
 	}
 
 public:
+	// Public member variables
+	hashTable * table;
+	int maxWordLength;
+
+	/*
+	 * constructor
+	 *
+	 * Initializes hash table to be a null pointer
+	 */
+	wordList(SORTING_ALGORITHM algorithm)
+	{
+		// Initialize hash table flag / ptr
+		if (algorithm == HASH_TABLE)
+			table = new hashTable(9007);
+		else
+			table = NULL;
+
+		maxWordLength = 0;
+	}
+
+	/*
+	 * destructor
+	 *
+	 * Deletes the hash table if it exists
+	 */
+	~wordList()
+	{
+		if (table)
+			delete table;
+	}
 
 	/*
 	 * readlist
@@ -126,7 +136,14 @@ public:
 			if (inFile.bad())
 				throw fileError("std::getline failed");
 
-			list.push_back(word);
+			// Add element to list or hash table, depending on algorithm selected
+			if (table)
+				table->addItem(word);
+			else
+				list.push_back(word);
+
+			// Store the size of the largest word in the dictionary
+			maxWordLength = max(maxWordLength, (int)word.length());
 		}
 	}
 
@@ -173,7 +190,7 @@ public:
 		{
 			// Word was found
 			if (list[guess] == word)
-				return findResult(guess, FOUND);
+				return findResult({ guess }, FOUND);
 
 			// Change the size of the sublist based on where the guess was in relation to the word
 			if (list[guess].compare(word) < 0)
@@ -204,14 +221,14 @@ public:
 					if (match)
 					{
 						// Result is a substring of at least one word in the list
-						return findResult(guess, SUBSTRING);
+						return findResult({ guess }, SUBSTRING);
 					}
 				}
 			}
 		}
 
 		// Result is not a substring of anything in the list
-		return findResult(guess, NOT_FOUND);
+		return findResult({}, NOT_FOUND);
 	}
 
 	/*
@@ -233,6 +250,9 @@ public:
 
 		case MERGE_SORT:
 			mergeSort();
+			break;
+		case HASH_TABLE:
+			return;
 			break;
 		}
 	}

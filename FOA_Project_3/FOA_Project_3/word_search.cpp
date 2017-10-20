@@ -1,16 +1,17 @@
 #include <ctime>
 #include "word_list.h"
 #include "grid.h"
+#include "hash.h"
 
 /*
  * findMatches
  *
  * Prints out all words from the word list that can be found in the grid
  */
-void findMatches(wordList * wordList, grid * letterMatrix)
+void findMatches(wordList * wordList, grid * letterMatrix, SORTING_ALGORITHM algorithm)
 {
 	// Search through the word search looking for words
-	letterMatrix->findWords(wordList);
+	letterMatrix->findWords(wordList, algorithm);
 }
 
 /*
@@ -22,6 +23,9 @@ void findMatches(wordList * wordList, grid * letterMatrix)
  */
 void search(SORTING_ALGORITHM algorithm, wordList * wordList, grid * letterMatrix)
 {
+	// Start program timer
+	clock_t startProgram = clock();
+
 	// Read in letter matrix
 	try
 	{
@@ -32,41 +36,62 @@ void search(SORTING_ALGORITHM algorithm, wordList * wordList, grid * letterMatri
 		cout << e.what();
 	}
 
-	// Read in word list
-	try
+	// Begin algorithm timer
+	clock_t algorithmBegin = clock();
+	switch (algorithm)
 	{
-		wordList->readlist();
-	}
-	catch (baseException e)
-	{
-		cout << e.what();
+		case HASH_TABLE:
+		{
+			// Read in word list and store in hash table
+			
+			hashTable hashTable(9007); // constructor with optional int arguement for non null
+			try
+			{
+				wordList->readlist();
+			}
+			catch (baseException e)
+			{
+				cout << e.what();
+			}
+		}
+		break;
+
+		case INSERTION_SORT:
+		case QUICK_SORT:
+		case MERGE_SORT:
+		{
+			// Read in word list and store in string vector
+			try
+			{
+				wordList->readlist();
+			}
+			catch (baseException e)
+			{
+				cout << e.what();
+			}
+
+			// Run sorting algorithm
+			wordList->sort(algorithm);
+		}
+		break;
 	}
 
-	// Start timer
-	std::clock_t start = std::clock();
+	// Get algorithm run time
+	double algorithmRunTime = (clock() - algorithmBegin) / (double)CLOCKS_PER_SEC;
 
-	// Run sorting algorithm
-	wordList->sort(algorithm);
-	
-	// Print out run time
-	double duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
-	std::cout << "Sorting time (s): " << duration << endl;
-	
-	
-	//start timer for find match
-	std::clock_t start2 = std::clock();
 	// Find matches
+	clock_t findMatchBegin = clock();
+	findMatches(wordList, letterMatrix, algorithm);
 	
-	findMatches(wordList, letterMatrix);					// Commented out so it doesn't attempt to search in an unsorted list
+	// Get find match time and total run time
+	double findMatchDuration = (clock() - findMatchBegin) / (double)CLOCKS_PER_SEC;
+	double totalDuration = (clock() - startProgram) / (double)CLOCKS_PER_SEC;
 	
-	//Print out run time
-	double duration2 = (std::clock() - start2) / (double)CLOCKS_PER_SEC;
-	std::cout << "Find match time (s): " << duration2 << endl;
-	
-	//Print out total time
-	double totalTime = duration + duration2;
-	std::cout << "Total time (s): " << totalTime << endl;
-
+	// Print results
+	cout << "Results: " << endl
+		<< "Algorithm runtime (s): " << algorithmRunTime << endl
+		<< "Find Word runtime (s): " << findMatchDuration << endl
+		<< "Total time (s): " << totalDuration << endl;
 }
 
 /*
@@ -76,7 +101,7 @@ void search(SORTING_ALGORITHM algorithm, wordList * wordList, grid * letterMatri
  */
 int main()
 {
-	wordList wordList;
+	wordList wordList(MERGE_SORT);
 	grid letterMatrix;
 
 	search(MERGE_SORT, &wordList, &letterMatrix);
