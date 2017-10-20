@@ -1,8 +1,13 @@
 ﻿  word_search.cpp
-c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\word_list.h(168): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\word_list.h(249): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\word_list.h(288): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\grid.h(177): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\grid.h(178): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\word_list.h(169): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\word_list.h(273): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\word_list.h(312): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\grid.h(198): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\grid.h(199): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\heap.h(164): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\heap.h(162): note: while compiling class template member function 'void heapSortAlgo<std::string>::heapSort(void)'
+  c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\word_list.h(368): note: see reference to function template instantiation 'void heapSortAlgo<std::string>::heapSort(void)' being compiled
+  c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\word_list.h(366): note: see reference to class template instantiation 'heapSortAlgo<std::string>' being compiled
+c:\users\jun jie chen\desktop\foa_project_3-master\foa_project_3\foa_project_3\heap.h(168): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   FOA_Project_3.vcxproj -> C:\Users\Jun Jie Chen\Desktop\FOA_Project_3-master\FOA_Project_3\x64\Debug\FOA_Project_3.exe
   FOA_Project_3.vcxproj -> C:\Users\Jun Jie Chen\Desktop\FOA_Project_3-master\FOA_Project_3\x64\Debug\FOA_Project_3.pdb (Partial PDB)

@@ -1,3 +1,9 @@
+/*
+* Name: Jun Jie Chen, Jon White
+* Project 3
+* Group: 5
+* Platform: Microsoft Visual Studio
+*/
 #include <ctime>
 #include "word_list.h"
 #include "grid.h"
@@ -50,17 +56,16 @@ void search(SORTING_ALGORITHM algorithm, wordList * wordList, grid * letterMatri
 	
 	// Print out run time
 	double duration = (std::clock() - start) / (double)CLOCKS_PER_SEC;
-	std::cout << "Sorting time (s): " << duration << endl;
-	
 	
 	//start timer for find match
 	std::clock_t start2 = std::clock();
 	// Find matches
-	
+	std::cout << std::endl << "Match Word:" << std::endl;
 	findMatches(wordList, letterMatrix);					// Commented out so it doesn't attempt to search in an unsorted list
 	
 	//Print out run time
 	double duration2 = (std::clock() - start2) / (double)CLOCKS_PER_SEC;
+	std::cout << std::endl<<"Sorting time (s): " << duration << endl;
 	std::cout << "Find match time (s): " << duration2 << endl;
 	
 	//Print out total time
@@ -79,7 +84,7 @@ int main()
 	wordList wordList;
 	grid letterMatrix;
 
-	search(MERGE_SORT, &wordList, &letterMatrix);
+	search(HEAP_SORT, &wordList, &letterMatrix);
 	
 	system("pause");
 	return 0;

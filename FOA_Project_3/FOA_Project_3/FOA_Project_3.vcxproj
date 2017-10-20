@@ -21,8 +21,8 @@
   <ItemGroup>
     <ClInclude Include="d_except.h" />
     <ClInclude Include="grid.h" />
+    <ClInclude Include="heap.h" />
     <ClInclude Include="word_list.h" />
-    <ClInclude Include="heapV.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="input15.txt" />
