@@ -1,3 +1,10 @@
+/*
+* Name: Jun Jie Chen, Jon White
+* Project 3
+* Group: 5
+* Platform: Microsoft Visual Studio
+*/
+
 #include <ctime>
 #include "word_list.h"
 #include "grid.h"
@@ -59,6 +66,7 @@ void search(SORTING_ALGORITHM algorithm, wordList * wordList, grid * letterMatri
 		case INSERTION_SORT:
 		case QUICK_SORT:
 		case MERGE_SORT:
+		case HEAP_SORT:
 		{
 			// Read in word list and store in string vector
 			try
@@ -101,10 +109,10 @@ void search(SORTING_ALGORITHM algorithm, wordList * wordList, grid * letterMatri
  */
 int main()
 {
-	wordList wordList(MERGE_SORT);
+	wordList wordList(HEAP_SORT);
 	grid letterMatrix;
 
-	search(MERGE_SORT, &wordList, &letterMatrix);
+	search(HEAP_SORT, &wordList, &letterMatrix);
 	
 	system("pause");
 	return 0;

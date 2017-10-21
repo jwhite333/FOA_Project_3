@@ -7,6 +7,7 @@
 #include "d_except.h"
 #include "helpers.h"
 #include "hash.h"
+#include "heap.h"
 
 using namespace std;
 
@@ -45,10 +46,10 @@ private:
 					cout << i + 1 << " - " << availableListFiles[i] << endl;
 				}
 				cout << "Enter numerical choice: ";
-				std::cin >> input;
+				cin >> input;
 
 				// Catch bad input
-				if (std::cin.fail())
+				if (cin.fail())
 					throw inputError::NOT_A_NUM;
 
 				// Catch out of range input
@@ -64,13 +65,13 @@ private:
 
 				// Display error for bad input
 				if (e == inputError::NOT_A_NUM)
-					std::cout << "ERROR, input not a number" << std::endl;
+					cout << "ERROR, input not a number" << endl;
 				if (e == inputError::OUT_OF_RANGE)
-					std::cout << "ERROR, input is not one of the available options" << std::endl;
+					cout << "ERROR, input is not one of the available options" << endl;
 
 				// Clear cin buffer
-				std::cin.clear();
-				std::cin.ignore(std::cin.rdbuf()->in_avail(), '\n');
+				cin.clear();
+				cin.ignore(cin.rdbuf()->in_avail(), '\n');
 			}
 
 		} while (error != inputError::NONE);
@@ -134,7 +135,7 @@ public:
 		while (getline(inFile, word))
 		{
 			if (inFile.bad())
-				throw fileError("std::getline failed");
+				throw fileError("getline failed");
 
 			// Add element to list or hash table, depending on algorithm selected
 			if (table)
@@ -251,8 +252,13 @@ public:
 		case MERGE_SORT:
 			mergeSort();
 			break;
+
 		case HASH_TABLE:
 			return;
+			break;
+
+		case HEAP_SORT:
+			heapSort();
 			break;
 		}
 	}
@@ -264,7 +270,7 @@ public:
 	 */
 	void insertionSort()
 	{
-		std::string word;
+		string word;
 		int i;
 		for (int j = 1; j < (int) list.size(); j++)
 		{
@@ -290,8 +296,8 @@ public:
 	}
 	void quickSortIteration(int left, int right)
 	{
-		std::string pivot = list[right];
-		std::string temp;
+		string pivot = list[right];
+		string temp;
 		int i = left - 1;
 		int j = left;
 		for (j; j < right; j++)
@@ -325,7 +331,8 @@ public:
 	 */
 	void mergeSort()
 	{
-		mergeSortIteration(0, list.size() - 1);
+		int size = list.size() - 1;
+		mergeSortIteration(0, size);
 	}
 
 	void mergeSortIteration(int low, int high)
@@ -341,7 +348,7 @@ public:
 	}
 	void merge(int low, int mid, int high)
 	{
-		std::string tempword;
+		string tempword;
 		vector<string> tempList;
 		int l = low, m = mid + 1, h = high;
 
@@ -369,12 +376,20 @@ public:
 			tempList.push_back(list[m]);
 			m++;
 		}
-		tempList;
 
 		for (int index = low; index <= high; index++)
 		{
 			list[index] = tempList[index - low];
 		}
 		list;
+	}
+
+	void heapSort()
+	{
+		heapSortAlgo<string> heap;
+		heap.initializeMaxHeap(list);
+		heap.heapSort();
+		list = heap.getSortedWordList();
+		list; // TODO: why is this here
 	}
 };
